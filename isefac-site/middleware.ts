@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value)) // CORRIGÉ ICI
           supabaseResponse = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
@@ -27,8 +27,6 @@ export async function middleware(request: NextRequest) {
   return supabaseResponse
 }
 
-// AVANT : bloquait tout
-// MAINTENANT : bloque que /dashboard et /admin
 export const config = {
   matcher: ['/dashboard/:path*', '/admin/:path*']
 }

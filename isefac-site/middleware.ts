@@ -27,6 +27,8 @@ export async function middleware(request: NextRequest) {
   return supabaseResponse
 }
 
+// AVANT : bloquait tout
+// MAINTENANT : bloque que /dashboard et /admin
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+  matcher: ['/dashboard/:path*', '/admin/:path*']
 }

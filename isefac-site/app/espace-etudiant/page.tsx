@@ -32,14 +32,12 @@ export default function EspaceEtudiant() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 
-  // NOUVEAUX SLIDES ÉTUDIANTS
   const slides = [
     'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&q=80',
     'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=1920&q=80',
     'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1920&q=80'
   ]
 
-  // STATS AVEC IMAGES
   const stats = [
     {
       image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&q=80',
@@ -122,7 +120,7 @@ export default function EspaceEtudiant() {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
-        router.push('/connexion')
+        router.push('/inscription')
       } else {
         setUser(user)
         setLoading(false)
@@ -155,18 +153,21 @@ export default function EspaceEtudiant() {
       <main className={`min-h-screen flex items-center justify-center ${montserrat.className}`}>
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 font-bold">Chargement...</p>
+          <p className="text-gray-600 font-bold">Vérification...</p>
         </div>
       </main>
     )
   }
 
+  if (!user) {
+    return null
+  }
+
   return (
     <main className={`min-h-screen ${montserrat.className}`}>
-      {/* HEADER IDENTIQUE À L'ACCUEIL */}
       <header className={`fixed top-0 w-full z-50 transition-all duration-500 ${
         scrolled
- ? 'bg-[#1e2a5e] shadow-xl py-4'
+? 'bg-[#1e2a5e] shadow-xl py-4'
           : 'bg-transparent py-5'
       }`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
@@ -195,7 +196,6 @@ export default function EspaceEtudiant() {
         </div>
       </header>
 
-      {/* HERO SLIDER AVEC NOUVELLES IMAGES */}
       <section className="relative h-screen w-full overflow-hidden">
         {slides.map((slide, index) => (
           <div
@@ -266,9 +266,8 @@ export default function EspaceEtudiant() {
         </div>
       </section>
 
-      {/* Section Dashboard */}
       <section id="dashboard" className="bg-white py-24">
-        <div className="max-w-7xl mx-auto px-6"/>
+        <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-3xl md:text-5xl font-black mb-6 text-gray-900 text-center">
             TABLEAU DE BORD
           </h2>
@@ -277,7 +276,6 @@ export default function EspaceEtudiant() {
           </p>
           <div className="w-24 h-1 bg-blue-600 mx-auto mb-16"></div>
 
-          {/* Stats Cards AVEC IMAGES */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
             {stats.map((stat, i) => (
               <div key={i} className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all hover:scale-105 border border-gray-100 overflow-hidden">
@@ -302,7 +300,6 @@ export default function EspaceEtudiant() {
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* Mes Formations AVEC IMAGES */}
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-white rounded-3xl p-8 shadow-xl border-2 border-gray-100">
                 <div className="flex items-center justify-between mb-8">
@@ -336,7 +333,7 @@ export default function EspaceEtudiant() {
                           />
                           <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-black ${
                             cours.statut === 'Terminé'
-                          ? 'bg-green-500 text-white'
+                        ? 'bg-green-500 text-white'
                               : 'bg-blue-500 text-white'
                           }`}>
                             {cours.statut}
@@ -368,7 +365,6 @@ export default function EspaceEtudiant() {
                 </div>
               </div>
 
-              {/* Agenda */}
               <div className="bg-white rounded-3xl p-8 shadow-xl border-2 border-gray-100">
                 <h3 className="text-3xl font-black text-gray-900 mb-6 flex items-center gap-3">
                   <Image
@@ -383,7 +379,7 @@ export default function EspaceEtudiant() {
                 </h3>
                 <div className="space-y-4">
                   <div className="flex gap-4 p-5 bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl border-2 border-blue-200">
-                    <div className="bg-blue-600 text-white rounded-xl p-4 text-center min-w- shadow-lg">
+                    <div className="bg-blue-600 text-white rounded-xl p-4 text-center min-w-20 shadow-lg">
                       <p className="text-3xl font-black">09</p>
                       <p className="text-xs font-bold">MAI</p>
                     </div>
@@ -396,7 +392,7 @@ export default function EspaceEtudiant() {
                     </div>
                   </div>
                   <div className="flex gap-4 p-5 bg-gray-50 rounded-2xl border-2 border-gray-200">
-                    <div className="bg-gray-700 text-white rounded-xl p-4 text-center min-w- shadow-lg">
+                    <div className="bg-gray-700 text-white rounded-xl p-4 text-center min-w-20 shadow-lg">
                       <p className="text-3xl font-black">15</p>
                       <p className="text-xs font-bold">MAI</p>
                     </div>
@@ -409,9 +405,7 @@ export default function EspaceEtudiant() {
               </div>
             </div>
 
-            {/* Sidebar */}
             <div className="space-y-6">
-              {/* Profil */}
               <div className="bg-gradient-to-br from-[#1e2a5e] to-[#162042] rounded-3xl p-6 text-white shadow-2xl">
                 <div className="text-center mb-6">
                   <div className="relative w-24 h-24 mx-auto mb-4">
@@ -433,17 +427,17 @@ export default function EspaceEtudiant() {
                       <p className="text-xs text-blue-200 font-semibold">Email</p>
                       <p className="font-bold">{user?.email}</p>
                     </div>
+                  </div>
                   <div className="flex items-center gap-3 p-3 bg-white/10 backdrop-blur rounded-xl">
                     <Clock size={18} />
                     <div>
                       <p className="text-xs text-blue-200 font-semibold">Inscrit le</p>
-                      <p className="font-bold">{new Date(user?.created_at).toLocaleDateString('fr-FR')}</p>
+                      <p className="font-bold">{user?.created_at? new Date(user.created_at).toLocaleDateString('fr-FR') : 'N/A'}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Notifications AVEC IMAGES */}
               <div id="notifications" className="bg-white rounded-3xl p-6 shadow-xl border-2 border-gray-100">
                 <h3 className="text-xl font-black text-gray-900 mb-5 flex items-center gap-2">
                   <Bell className="text-blue-600" size={24} />
@@ -472,7 +466,6 @@ export default function EspaceEtudiant() {
                 </div>
               </div>
 
-              {/* Actions rapides */}
               <div className="bg-white rounded-3xl p-6 shadow-xl border-2 border-gray-100">
                 <h3 className="text-xl font-black text-gray-900 mb-5">Actions Rapides</h3>
                 <div className="space-y-3">
@@ -519,7 +512,6 @@ export default function EspaceEtudiant() {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer className="bg-[#1e2a5e] text-white py-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center space-y-3">

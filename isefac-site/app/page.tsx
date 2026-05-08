@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { Montserrat } from 'next/font/google'
+import { Menu, X } from 'lucide-react'
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -12,6 +13,7 @@ const montserrat = Montserrat({
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [scrolled, setScrolled] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const slides = [
     'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1920&q=80',
@@ -34,6 +36,17 @@ export default function Home() {
     { chiffre: '300', texte: 'Entreprises partenaires' },
   ]
 
+  const navLinks = [
+    { href: '/', label: 'Accueil' },
+    { href: '/a-propos', label: 'A propos' },
+    { href: '/public-cible', label: 'Public cible' },
+    { href: '/formations', label: 'Formations' },
+    { href: '/inscription', label: 'Inscription' },
+    { href: '/contact', label: 'Contact' },
+    { href: '/espace-etudiant', label: 'Espace étudiant' },
+    { href: '/faq', label: 'FAQ' },
+  ]
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length)
@@ -49,7 +62,7 @@ export default function Home() {
 
   return (
     <main className={`min-h-screen ${montserrat.className}`}>
-      {/* HEADER : TRANSPARENT EN HAUT, BLEU QUAND TU SCROLL */}
+      {/* HEADER AVEC MENU BURGER MOBILE */}
       <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${
         scrolled
           ? 'bg-[#1e2a5e] shadow-xl py-4'
@@ -65,16 +78,62 @@ export default function Home() {
               className="bg-white p-2 rounded-lg object-contain"
             />
           </Link>
+          
+          {/* NAV DESKTOP */}
           <nav className="hidden md:flex space-x-8 text-white font-medium drop-shadow-lg">
-            <Link href="/" className="text-orange-400 hover:text-orange-300">Accueil</Link>
-            <Link href="/a-propos" className="hover:text-blue-200">A propos</Link>
-            <Link href="/public-cible" className="hover:text-blue-200">Public cible</Link>
-            <Link href="/formations" className="hover:text-blue-200">Formations</Link>
-            <Link href="/contact" className="hover:text-blue-200">Contact</Link>
-            <Link href="/espace-etudiant" className="hover:text-blue-200">Espace étudiant</Link>
-            <Link href="/faq" className="hover:text-blue-200">FAQ</Link>
+            {navLinks.map((link) => (
+              <Link 
+                key={link.href} 
+                href={link.href} 
+                className={link.href === '/' ? 'text-orange-400 hover:text-orange-300' : 'hover:text-blue-200'}
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
+
+          {/* BOUTON S'INSCRIRE DESKTOP */}
+          <Link href="/inscription" className="hidden md:block bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-bold transition">
+            S'inscrire
+          </Link>
+
+          {/* BURGER MOBILE */}
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-white p-2"
+          >
+            {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
         </div>
+
+        {/* MENU MOBILE DÉROULANT */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-[#1e2a5e] border-t border-blue-800">
+            <nav className="flex flex-col space-y-1 px-6 py-4">
+              {navLinks.map((link) => (
+                <Link 
+                  key={link.href} 
+                  href={link.href} 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`py-3 px-4 rounded-lg font-bold transition ${
+                    link.href === '/' 
+                      ? 'bg-orange-500 text-white' 
+                      : 'text-white hover:bg-blue-800'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <Link 
+                href="/inscription" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="bg-orange-500 text-white py-3 px-4 rounded-lg font-bold text-center mt-2"
+              >
+                S'inscrire
+              </Link>
+            </nav>
+          </div>
+        )}
       </header>
 
       {/* HERO */}
@@ -99,32 +158,32 @@ export default function Home() {
         ))}
 
         <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center z-10 px-4 pt-32">
-          <p className="text-base md:text-xl mb-4 drop-shadow-lg uppercase tracking-wider font-semibold">
+          <p className="text-sm md:text-xl mb-4 drop-shadow-lg uppercase tracking-wider font-semibold">
             INSTITUT DES SCIENCES DE L'ENSEIGNEMENT ET DE LA FORMATION EN ADMINISTRATION ET COMMERCE
           </p>
-          <h1 className="text-4xl md:text-6xl font-black mb-2 drop-shadow-2xl">
+          <h1 className="text-3xl md:text-6xl font-black mb-2 drop-shadow-2xl">
             ISEFAC BUSINESS SCHOOL
           </h1>
-          <p className="text-xl md:text-2xl mb-4 font-bold text-blue-300 drop-shadow-lg">
+          <p className="text-lg md:text-2xl mb-4 font-bold text-blue-300 drop-shadow-lg">
             Libreville, Gabon
           </p>
-          <p className="text-lg md:text-xl mb-8 drop-shadow-lg max-w-3xl font-medium">
+          <p className="text-base md:text-xl mb-8 drop-shadow-lg max-w-3xl font-medium px-4">
             Une école professionnelle d'excellence au service de votre avenir
           </p>
 
-          <div className="flex flex-wrap gap-4 justify-center">
-            <button className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105">
+          <div className="flex flex-wrap gap-3 justify-center px-4">
+            <Link href="/inscription" className="bg-blue-600 hover:bg-blue-700 px-5 py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105 text-sm md:text-base">
               📝 L'inscription
-            </button>
-            <button className="bg-sky-500 hover:bg-sky-600 px-6 py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105">
+            </Link>
+            <Link href="/contact" className="bg-sky-500 hover:bg-sky-600 px-5 py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105 text-sm md:text-base">
               📰 Actualités
-            </button>
-            <button className="bg-blue-800 hover:bg-blue-900 px-6 py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105">
+            </Link>
+            <Link href="/a-propos" className="bg-blue-800 hover:bg-blue-900 px-5 py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105 text-sm md:text-base">
               👍 Références
-            </button>
-            <button className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105">
+            </Link>
+            <Link href="/formations" className="bg-red-600 hover:bg-red-700 px-5 py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105 text-sm md:text-base">
               ✈️ Erasmus
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -185,9 +244,9 @@ export default function Home() {
               <p className="text-lg text-blue-100 mb-8 leading-relaxed font-medium">
                 Communication, Marketing, Digital, Événementiel : choisissez une formation reconnue par l'État et plébiscitée par les recruteurs.
               </p>
-              <button className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg shadow-xl transition hover:scale-105">
+              <Link href="/inscription" className="inline-block bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg shadow-xl transition hover:scale-105">
                 Étudiez maintenant
-              </button>
+              </Link>
             </div>
             <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20 group">
               <Image
@@ -202,23 +261,23 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Section Partenaires */}
-      <section id="partenaires" className="bg-white py-20 border-t">
+      {/* Section Partenaires - FIX MOBILE */}
+      <section id="partenaires" className="bg-white py-20 border-t overflow-hidden">
         <div className="max-w-6xl mx-auto px-6">
           <p className="text-center text-gray-800 text-2xl mb-12 font-black">
             Nos écoles et universités partenaires
           </p>
 
-          <div className="relative overflow-hidden">
+          <div className="relative w-full overflow-hidden">
             <div className="flex animate-scroll">
               {[...partenaires,...partenaires].map((p, i) => (
-                <div key={i} className="flex-shrink-0 w-64 mx-8">
+                <div key={i} className="flex-shrink-0 w-48 md:w-64 mx-4 md:mx-8">
                   <Image
                     src={p.logo}
                     alt={p.nom}
                     width={200}
                     height={100}
-                    className="object-contain h-24 w-full mx-auto"
+                    className="object-contain h-20 md:h-24 w-full mx-auto"
                     unoptimized
                   />
                 </div>
@@ -230,10 +289,10 @@ export default function Home() {
         <style jsx>{`
           @keyframes scroll {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+            100% { transform: translateX(-33.333%); }
           }
           .animate-scroll {
-            animation: scroll 20s linear infinite;
+            animation: scroll 25s linear infinite;
           }
           .animate-scroll:hover {
             animation-play-state: paused;

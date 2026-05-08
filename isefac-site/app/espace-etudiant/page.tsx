@@ -2,20 +2,17 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Montserrat } from 'next/font/google'
-import { 
-  GraduationCap, 
-  TrendingUp, 
-  Users, 
-  Briefcase, 
-  Award, 
-  CheckCircle, 
-  ArrowRight,
-  BookOpen,
-  Globe,
-  Target,
+import { createBrowserClient } from '@supabase/ssr'
+import {
+  User,
+  LogOut,
+  Bell,
+  ChevronRight,
+  Clock,
   FileText,
-  Clock
+  MessageSquare
 } from 'lucide-react'
 
 const montserrat = Montserrat({
@@ -23,67 +20,116 @@ const montserrat = Montserrat({
   weight: ['400', '600', '700', '800', '900']
 })
 
-export default function Formations() {
-  const [scrolled, setScrolled] = useState(false)
+export default function EspaceEtudiant() {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [scrolled, setScrolled] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+
+  // NOUVEAUX SLIDES ÉTUDIANTS
   const slides = [
     'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&q=80',
-    'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1920&q=80',
+    'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=1920&q=80',
     'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1920&q=80'
   ]
 
-  const formations = [
+  // STATS AVEC IMAGES
+  const stats = [
     {
-      titre: 'Marketing Digital',
-      niveau: 'Licence',
-      duree: '3 ans',
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80',
-      points: ['SEO/SEA', 'Réseaux sociaux', 'E-commerce', 'Data Analytics'],
-      debouches: ['Community Manager', 'Traffic Manager', 'Chef de projet digital'],
-      prix: '1 500 000 FCFA/an'
+      image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&q=80',
+      chiffre: '5',
+      texte: 'Cours Actifs',
+      color: 'from-blue-500 to-blue-600'
+    },
+    {
+      image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&q=80',
+      chiffre: '2',
+      texte: 'Certifications',
+      color: 'from-emerald-500 to-emerald-600'
+    },
+    {
+      image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=80',
+      chiffre: '78%',
+      texte: 'Progression',
+      color: 'from-orange-500 to-orange-600'
+    },
+    {
+      image: 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=400&q=80',
+      chiffre: '142h',
+      texte: 'Heures Validées',
+      color: 'from-purple-500 to-purple-600'
+    },
+  ]
+
+  const coursRecents = [
+    {
+      titre: 'Marketing Digital Avancé',
+      progression: 85,
+      module: 'Module 4 sur 5',
+      prochainCours: 'Mercredi 8 Mai - 14h00',
+      statut: 'En cours',
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80'
     },
     {
       titre: 'Comptabilité & Gestion',
-      niveau: 'Licence',
-      duree: '3 ans',
-      image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&q=80',
-      points: ['Comptabilité', 'Fiscalité', 'Audit', 'Contrôle de gestion'],
-      debouches: ['Comptable', 'Contrôleur de gestion', 'Auditeur junior'],
-      prix: '1 500 000 FCFA/an'
+      progression: 60,
+      module: 'Module 3 sur 6',
+      prochainCours: 'Vendredi 10 Mai - 10h00',
+      statut: 'En cours',
+      image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&q=80'
     },
     {
       titre: 'Communication d\'Entreprise',
-      niveau: 'Certification',
-      duree: '6 mois',
-      image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=600&q=80',
-      points: ['Relations publiques', 'Événementiel', 'Communication interne', 'Branding'],
-      debouches: ['Chargé de com', 'Attaché de presse', 'Event planner'],
-      prix: '800 000 FCFA'
+      progression: 100,
+      module: 'Formation terminée',
+      prochainCours: 'Certificat disponible',
+      statut: 'Terminé',
+      image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400&q=80'
     },
   ]
 
-  const avantages = [
-    { icon: Briefcase, titre: 'Stages Garantis', desc: 'En entreprise dès la 1ère année' },
-    { icon: Globe, titre: 'Diplôme Reconnu', desc: 'Agréé par l\'État gabonais' },
-    { icon: Users, titre: 'Réseau Pro', desc: '+300 entreprises partenaires' },
-    { icon: Target, titre: '92% Insertion', desc: 'Taux d\'employabilité record' },
+  const notifications = [
+    {
+      titre: 'Nouveau module disponible',
+      desc: 'Droit des Affaires - Chapitre 3 est maintenant en ligne',
+      date: 'Il y a 2h',
+      type: 'info',
+      image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=100&q=80'
+    },
+    {
+      titre: 'Évaluation à venir',
+      desc: 'Marketing Digital - Vendredi 9 Mai à 14h00',
+      date: 'Il y a 1j',
+      type: 'warning',
+      image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=100&q=80'
+    },
+    {
+      titre: 'Certificat validé',
+      desc: 'Communication d\'Entreprise - Téléchargez votre attestation',
+      date: 'Il y a 3j',
+      type: 'success',
+      image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=100&q=80'
+    },
   ]
 
-  const temoignages = [
-    {
-      nom: 'Aïcha Mba',
-      poste: 'Community Manager chez Airtel Gabon',
-      photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80',
-      texte: 'ISEFAC m\'a donné les clés pour réussir. 3 mois après mon diplôme, j\'étais embauchée.'
-    },
-    {
-      nom: 'Jean Obame',
-      poste: 'Comptable chez BGFI Bank',
-      photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80',
-      texte: 'La formation est très pratique. Les stages m\'ont permis de créer mon réseau.'
-    },
-  ]
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        router.push('/connexion')
+      } else {
+        setUser(user)
+        setLoading(false)
+      }
+    }
+    checkUser()
+  }, [router, supabase])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -98,12 +144,29 @@ export default function Formations() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    router.push('/')
+    router.refresh()
+  }
+
+  if (loading) {
+    return (
+      <main className={`min-h-screen flex items-center justify-center ${montserrat.className}`}>
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 font-bold">Chargement...</p>
+        </div>
+      </main>
+    )
+  }
+
   return (
     <main className={`min-h-screen ${montserrat.className}`}>
-      {/* HEADER IDENTIQUE */}
+      {/* HEADER IDENTIQUE À L'ACCUEIL */}
       <header className={`fixed top-0 w-full z-50 transition-all duration-500 ${
         scrolled
-  ? 'bg-[#1e2a5e] shadow-xl py-4'
+ ? 'bg-[#1e2a5e] shadow-xl py-4'
           : 'bg-transparent py-5'
       }`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
@@ -117,18 +180,22 @@ export default function Formations() {
           <nav className="hidden md:flex space-x-8 text-white font-medium drop-shadow-lg">
             <Link href="/" className="hover:text-blue-200">Accueil</Link>
             <Link href="/a-propos" className="hover:text-blue-200">A propos</Link>
-            <Link href="/formations" className="text-orange-400 hover:text-orange-300">Formations</Link>
+            <Link href="/formations" className="hover:text-blue-200">Formations</Link>
             <Link href="/contact" className="hover:text-blue-200">Contact</Link>
-            <Link href="/espace-etudiant" className="hover:text-blue-200">Espace étudiant</Link>
+            <Link href="/espace-etudiant" className="text-orange-400 hover:text-orange-300">Espace étudiant</Link>
             <Link href="/faq" className="hover:text-blue-200">FAQ</Link>
           </nav>
-          <Link href="/inscription" className="hidden md:block bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-bold transition">
-            S'inscrire
-          </Link>
+          <button
+            onClick={handleSignOut}
+            className="hidden md:flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg font-bold transition shadow-lg"
+          >
+            <LogOut size={18} />
+            Déconnexion
+          </button>
         </div>
       </header>
 
-      {/* HERO SLIDER */}
+      {/* HERO SLIDER AVEC NOUVELLES IMAGES */}
       <section className="relative h-screen w-full overflow-hidden">
         {slides.map((slide, index) => (
           <div
@@ -145,29 +212,43 @@ export default function Formations() {
               priority={index === 0}
               unoptimized
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/40" />
+            <div className="absolute inset-0 bg-black/50" />
           </div>
         ))}
 
         <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center z-10 px-4 pt-32">
-          <p className="text-base md:text-xl mb-4 drop-shadow-lg uppercase tracking-wider font-semibold text-orange-400">
-            FORMATIONS PROFESSIONNALISANTES
+          <p className="text-base md:text-xl mb-4 drop-shadow-lg uppercase tracking-wider font-semibold text-blue-300">
+            ESPACE ÉTUDIANT ISEFAC BUSINESS SCHOOL
           </p>
-          <h1 className="text-4xl md:text-7xl font-black mb-4 drop-shadow-2xl">
-            TON AVENIR COMMENCE ICI
+          <h1 className="text-4xl md:text-6xl font-black mb-2 drop-shadow-2xl">
+            BIENVENUE, {user?.email?.split('@')[0]?.toUpperCase()} 👋
           </h1>
-          <p className="text-xl md:text-2xl mb-8 drop-shadow-lg max-w-3xl font-medium">
-            Licence, Master, Certification - Des diplômes reconnus par l'État et les entreprises
+          <p className="text-xl md:text-2xl mb-4 font-bold text-orange-400 drop-shadow-lg">
+            Continue ton parcours d'excellence
+          </p>
+          <p className="text-lg md:text-xl mb-8 drop-shadow-lg max-w-3xl font-medium">
+            Accède à tes cours, certifications et ressources en un clic
           </p>
 
           <div className="flex flex-wrap gap-4 justify-center">
-            <Link href="#formations" className="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-xl font-black text-lg flex items-center gap-2 transition hover:scale-105 shadow-2xl">
-              <BookOpen size={24} />
-              Voir les formations
+            <Link href="#dashboard" className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105">
+              <Image
+                src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=100&q=80"
+                alt="Cours"
+                width={24}
+                height={24}
+                className="rounded object-cover"
+                unoptimized
+              />
+              Mes Cours
             </Link>
-            <Link href="/inscription" className="bg-orange-500 hover:bg-orange-600 px-8 py-4 rounded-xl font-black text-lg flex items-center gap-2 transition hover:scale-105 shadow-2xl">
-              <GraduationCap size={24} />
-              Je m'inscris
+            <Link href="#notifications" className="bg-sky-500 hover:bg-sky-600 px-6 py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105">
+              <Bell size={20} />
+              Notifications
+            </Link>
+            <Link href="/contact" className="bg-blue-800 hover:bg-blue-900 px-6 py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105">
+              <MessageSquare size={20} />
+              Support
             </Link>
           </div>
         </div>
@@ -185,155 +266,256 @@ export default function Formations() {
         </div>
       </section>
 
-      {/* POURQUOI ISEFAC */}
-      <section className="bg-white py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black mb-6 text-gray-900">
-              POURQUOI CHOISIR ISEFAC ?
-            </h2>
-            <p className="text-xl text-gray-700 font-semibold max-w-3xl mx-auto">
-              Une école qui prépare vraiment à l'emploi avec 92% d'insertion professionnelle
-            </p>
-            <div className="w-24 h-1 bg-blue-600 mx-auto mt-6"></div>
-          </div>
+      {/* Section Dashboard */}
+      <section id="dashboard" className="bg-white py-24">
+        <div className="max-w-7xl mx-auto px-6"/>
+          <h2 className="text-3xl md:text-5xl font-black mb-6 text-gray-900 text-center">
+            TABLEAU DE BORD
+          </h2>
+          <p className="text-xl text-gray-700 font-semibold mb-12 text-center">
+            Vue d'ensemble de ton parcours académique
+          </p>
+          <div className="w-24 h-1 bg-blue-600 mx-auto mb-16"></div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {avantages.map((av, i) => (
-              <div key={i} className="text-center group">
-                <div className="bg-gradient-to-br from-[#1e2a5e] to-blue-600 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl group-hover:scale-110 transition">
-                  <av.icon className="text-white" size={36} />
-                </div>
-                <h3 className="text-xl font-black text-gray-900 mb-2">{av.titre}</h3>
-                <p className="text-gray-600 font-medium">{av.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* NOS FORMATIONS */}
-      <section id="formations" className="bg-gray-50 py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black mb-6 text-gray-900">
-              NOS FORMATIONS
-            </h2>
-            <p className="text-xl text-gray-700 font-semibold">
-              Choisis ton parcours vers l'excellence
-            </p>
-            <div className="w-24 h-1 bg-orange-500 mx-auto mt-6"></div>
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-8">
-            {formations.map((form, i) => (
-              <div key={i} className="bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all hover:scale-105 border-2 border-gray-100">
-                <div className="relative h-56">
+          {/* Stats Cards AVEC IMAGES */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            {stats.map((stat, i) => (
+              <div key={i} className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all hover:scale-105 border border-gray-100 overflow-hidden">
+                <div className="relative h-32">
                   <Image
-                    src={form.image}
-                    alt={form.titre}
+                    src={stat.image}
+                    alt={stat.texte}
                     fill
                     className="object-cover"
                     unoptimized
                   />
-                  <div className="absolute top-4 right-4 bg-orange-500 text-white px-4 py-2 rounded-full font-black text-sm">
-                    {form.niveau}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-90`}></div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <p className="text-5xl font-black text-white drop-shadow-lg">{stat.chiffre}</p>
                   </div>
                 </div>
-                <div className="p-8">
-                  <h3 className="text-2xl font-black text-gray-900 mb-2">{form.titre}</h3>
-                  <p className="text-blue-600 font-bold mb-4">{form.duree}</p>
-                  
-                  <div className="mb-6">
-                    <p className="text-sm font-bold text-gray-700 mb-2">Au programme :</p>
-                    <ul className="space-y-2">
-                      {form.points.map((point, j) => (
-                        <li key={j} className="flex items-center gap-2 text-gray-600">
-                          <CheckCircle size={18} className="text-green-500 flex-shrink-0" />
-                          <span className="font-medium">{point}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                <div className="p-4">
+                  <p className="text-gray-900 text-sm font-black uppercase tracking-wide">{stat.texte}</p>
+                </div>
+              </div>
+            ))}
+          </div>
 
-                  <div className="mb-6">
-                    <p className="text-sm font-bold text-gray-700 mb-2">Débouchés :</p>
-                    <div className="flex flex-wrap gap-2">
-                      {form.debouches.map((deb, k) => (
-                        <span key={k} className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">
-                          {deb}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Mes Formations AVEC IMAGES */}
+            <div className="lg:col-span-2 space-y-6">
+              <div className="bg-white rounded-3xl p-8 shadow-xl border-2 border-gray-100">
+                <div className="flex items-center justify-between mb-8">
+                  <h3 className="text-3xl font-black text-gray-900 flex items-center gap-3">
+                    <Image
+                      src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=100&q=80"
+                      alt="Formation"
+                      width={40}
+                      height={40}
+                      className="rounded-xl object-cover"
+                      unoptimized
+                    />
+                    Mes Formations
+                  </h3>
+                  <Link href="/formations" className="text-blue-600 hover:text-blue-800 font-bold text-sm flex items-center gap-1">
+                    Catalogue <ChevronRight size={18} />
+                  </Link>
+                </div>
 
-                  <div className="border-t border-gray-200 pt-6">
-                    <div className="flex justify-between items-center mb-4">
-                      <div>
-                        <p className="text-xs text-gray-500 font-semibold">Frais de scolarité</p>
-                        <p className="text-2xl font-black text-gray-900">{form.prix}</p>
+                <div className="space-y-5">
+                  {coursRecents.map((cours, i) => (
+                    <div key={i} className="border-2 border-gray-100 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-lg transition-all">
+                      <div className="flex gap-4">
+                        <div className="relative w-32 h-32 flex-shrink-0">
+                          <Image
+                            src={cours.image}
+                            alt={cours.titre}
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                          <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-black ${
+                            cours.statut === 'Terminé'
+                          ? 'bg-green-500 text-white'
+                              : 'bg-blue-500 text-white'
+                          }`}>
+                            {cours.statut}
+                          </div>
+                        </div>
+                        <div className="flex-1 p-4">
+                          <h4 className="font-black text-lg text-gray-900 mb-1">{cours.titre}</h4>
+                          <p className="text-sm text-gray-600 font-semibold mb-2">{cours.module}</p>
+                          <div className="flex items-center gap-2 text-sm text-gray-700 font-medium mb-3">
+                            <Clock size={16} />
+                            <span>{cours.prochainCours}</span>
+                          </div>
+                          <div className="space-y-1">
+                            <div className="flex justify-between text-xs font-black text-gray-700">
+                              <span>Progression</span>
+                              <span>{cours.progression}%</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden shadow-inner">
+                              <div
+                                className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-700"
+                                style={{ width: `${cours.progression}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <Link href="/inscription" className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl font-black flex items-center justify-center gap-2 transition shadow-lg">
-                      Je m'inscris <ArrowRight size={20} />
-                    </Link>
-                  </div>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* TÉMOIGNAGES */}
-      <section className="bg-[#1e2a5e] py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black mb-6 text-white">
-              ILS ONT RÉUSSI AVEC ISEFAC
-            </h2>
-            <p className="text-xl text-blue-200 font-semibold">
-              Nos diplômés témoignent
-            </p>
-            <div className="w-24 h-1 bg-orange-500 mx-auto mt-6"></div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {temoignages.map((tem, i) => (
-              <div key={i} className="bg-white rounded-3xl p-8 shadow-2xl">
-                <div className="flex items-center gap-4 mb-6">
+              {/* Agenda */}
+              <div className="bg-white rounded-3xl p-8 shadow-xl border-2 border-gray-100">
+                <h3 className="text-3xl font-black text-gray-900 mb-6 flex items-center gap-3">
                   <Image
-                    src={tem.photo}
-                    alt={tem.nom}
-                    width={70}
-                    height={70}
-                    className="rounded-full object-cover"
+                    src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=100&q=80"
+                    alt="Agenda"
+                    width={40}
+                    height={40}
+                    className="rounded-xl object-cover"
                     unoptimized
                   />
-                  <div>
-                    <h4 className="font-black text-xl text-gray-900">{tem.nom}</h4>
-                    <p className="text-blue-600 font-bold">{tem.poste}</p>
+                  Prochains Événements
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex gap-4 p-5 bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl border-2 border-blue-200">
+                    <div className="bg-blue-600 text-white rounded-xl p-4 text-center min-w- shadow-lg">
+                      <p className="text-3xl font-black">09</p>
+                      <p className="text-xs font-bold">MAI</p>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-black text-gray-900 text-lg mb-1">Évaluation Marketing Digital</h4>
+                      <p className="text-sm text-gray-700 font-semibold">14h00 - Salle B12 - Prof. Mbadinga</p>
+                      <span className="inline-block mt-2 px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full">
+                        Important
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex gap-4 p-5 bg-gray-50 rounded-2xl border-2 border-gray-200">
+                    <div className="bg-gray-700 text-white rounded-xl p-4 text-center min-w- shadow-lg">
+                      <p className="text-3xl font-black">15</p>
+                      <p className="text-xs font-bold">MAI</p>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-black text-gray-900 text-lg mb-1">Conférence Entrepreneuriat</h4>
+                      <p className="text-sm text-gray-700 font-semibold">10h00 - Amphithéâtre Principal</p>
+                    </div>
                   </div>
                 </div>
-                <p className="text-gray-700 text-lg font-medium italic">"{tem.texte}"</p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </div>
 
-      {/* CTA FINAL */}
-      <section className="bg-gradient-to-r from-orange-500 to-red-500 py-20">
-        <div className="max-w-4xl mx-auto px-6 text-center text-white">
-          <h2 className="text-4xl md:text-5xl font-black mb-6">
-            PRÊT À LANCER TA CARRIÈRE ?
-          </h2>
-          <p className="text-xl mb-8 font-semibold">
-            Les inscriptions 2026-2027 sont ouvertes. Places limitées.
-          </p>
-          <Link href="/inscription" className="inline-block bg-white text-orange-600 px-10 py-4 rounded-xl font-black text-lg hover:bg-gray-100 transition shadow-2xl hover:scale-105">
-            Je m'inscris maintenant
-          </Link>
+            {/* Sidebar */}
+            <div className="space-y-6">
+              {/* Profil */}
+              <div className="bg-gradient-to-br from-[#1e2a5e] to-[#162042] rounded-3xl p-6 text-white shadow-2xl">
+                <div className="text-center mb-6">
+                  <div className="relative w-24 h-24 mx-auto mb-4">
+                    <Image
+                      src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80"
+                      alt="Profile"
+                      fill
+                      className="rounded-full object-cover border-4 border-white/20"
+                      unoptimized
+                    />
+                  </div>
+                  <h3 className="font-black text-xl">{user?.email?.split('@')[0]}</h3>
+                  <p className="text-blue-200 text-sm font-semibold">Étudiant ISEFAC BS</p>
+                </div>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-center gap-3 p-3 bg-white/10 backdrop-blur rounded-xl">
+                    <FileText size={18} />
+                    <div>
+                      <p className="text-xs text-blue-200 font-semibold">Email</p>
+                      <p className="font-bold">{user?.email}</p>
+                    </div>
+                  <div className="flex items-center gap-3 p-3 bg-white/10 backdrop-blur rounded-xl">
+                    <Clock size={18} />
+                    <div>
+                      <p className="text-xs text-blue-200 font-semibold">Inscrit le</p>
+                      <p className="font-bold">{new Date(user?.created_at).toLocaleDateString('fr-FR')}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Notifications AVEC IMAGES */}
+              <div id="notifications" className="bg-white rounded-3xl p-6 shadow-xl border-2 border-gray-100">
+                <h3 className="text-xl font-black text-gray-900 mb-5 flex items-center gap-2">
+                  <Bell className="text-blue-600" size={24} />
+                  Notifications
+                </h3>
+                <div className="space-y-4">
+                  {notifications.map((notif, i) => (
+                    <div key={i} className="pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+                      <div className="flex items-start gap-3">
+                        <Image
+                          src={notif.image}
+                          alt={notif.titre}
+                          width={50}
+                          height={50}
+                          className="rounded-lg object-cover"
+                          unoptimized
+                        />
+                        <div className="flex-1">
+                          <h4 className="font-black text-sm text-gray-900 mb-1">{notif.titre}</h4>
+                          <p className="text-xs text-gray-600 mb-1">{notif.desc}</p>
+                          <p className="text-xs text-gray-400 font-bold">{notif.date}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions rapides */}
+              <div className="bg-white rounded-3xl p-6 shadow-xl border-2 border-gray-100">
+                <h3 className="text-xl font-black text-gray-900 mb-5">Actions Rapides</h3>
+                <div className="space-y-3">
+                  <Link href="/formations" className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-xl transition group">
+                    <Image
+                      src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=100&q=80"
+                      alt="Formations"
+                      width={40}
+                      height={40}
+                      className="rounded-lg object-cover"
+                      unoptimized
+                    />
+                    <span className="font-bold text-gray-700 flex-1">Mes Formations</span>
+                    <ChevronRight size={20} className="text-blue-600 group-hover:translate-x-1 transition" />
+                  </Link>
+                  <Link href="/contact" className="flex items-center gap-3 p-4 bg-gradient-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-xl transition group">
+                    <Image
+                      src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=100&q=80"
+                      alt="Support"
+                      width={40}
+                      height={40}
+                      className="rounded-lg object-cover"
+                      unoptimized
+                    />
+                    <span className="font-bold text-gray-700 flex-1">Support</span>
+                    <ChevronRight size={20} className="text-purple-600 group-hover:translate-x-1 transition" />
+                  </Link>
+                  <button className="w-full flex items-center gap-3 p-4 bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 rounded-xl transition group">
+                    <Image
+                      src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=100&q=80"
+                      alt="Certificats"
+                      width={40}
+                      height={40}
+                      className="rounded-lg object-cover"
+                      unoptimized
+                    />
+                    <span className="font-bold text-gray-700 flex-1">Certificats</span>
+                    <ChevronRight size={20} className="text-green-600 group-hover:translate-x-1 transition" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -345,11 +527,11 @@ export default function Formations() {
             <p className="text-sm text-blue-100">Reconnue par arrêté n°000324/MENICFP/SG/DGFP/DFP</p>
             <div className="flex flex-wrap justify-center gap-8 text-sm pt-4">
               <div className="flex items-center gap-2">
-                <Briefcase size={16} />
+                <MessageSquare size={16} />
                 <span>Zone Owendo Campus Quartier AWOUNGOU</span>
               </div>
               <div className="flex items-center gap-2">
-                <Briefcase size={16} />
+                <MessageSquare size={16} />
                 <span>Campus Espace PME Quartier AWENDJE</span>
               </div>
             </div>

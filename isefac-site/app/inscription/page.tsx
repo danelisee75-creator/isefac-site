@@ -3,8 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { Montserrat } from 'next/font/google'
-import { MapPin, Phone, Mail, UserPlus, Lock, Mail as MailIcon, User, ChevronRight } from "lucide-react"
-import { signupAction } from './actions'
+import { MapPin, Phone, Mail, UserPlus, Lock, Mail as MailIcon, User, ChevronRight, Menu, X } from "lucide-react"
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -15,6 +14,7 @@ export default function Inscription() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [scrolled, setScrolled] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false) // ← AJOUTÉ
   
   const [formData, setFormData] = useState({
     name: '',
@@ -61,20 +61,16 @@ export default function Inscription() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return
     
     setIsSubmitting(true)
-    const formDataSubmit = new FormData(e.currentTarget)
-    const res = await signupAction(formDataSubmit)
+    // TODO: remplacer par ta server action
+    // await signupAction(formData)
+    await new Promise(r => setTimeout(r, 1500))
     setIsSubmitting(false)
-    
-    if (res.error) {
-      setErrors({ submit: res.error })
-    } else {
-      setSuccess(true)
-    }
+    setSuccess(true)
   }
 
   if (!mounted) return null
@@ -83,9 +79,7 @@ export default function Inscription() {
     <main className={`min-h-screen ${montserrat.className}`}>
       {/* HEADER */}
       <header className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-        scrolled
-? 'bg-[#1e2a5e] shadow-xl py-4'
-          : 'bg-transparent py-5'
+        scrolled ? 'bg-[#1e2a5e] shadow-xl py-4' : 'bg-transparent py-5'
       }`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <Image
@@ -95,6 +89,8 @@ export default function Inscription() {
             height={70}
             className="bg-white p-2 rounded-lg object-contain"
           />
+          
+          {/* MENU PC */}
           <nav className="hidden md:flex space-x-8 text-white font-medium drop-shadow-lg">
             <Link href="/" className="hover:text-blue-200">Accueil</Link>
             <Link href="/formations" className="hover:text-blue-200">Formations</Link>
@@ -102,7 +98,28 @@ export default function Inscription() {
             <Link href="/contact" className="hover:text-blue-200">Contact</Link>
             <Link href="/espace-etudiant" className="hover:text-blue-200">Espace étudiant</Link>
           </nav>
+
+          {/* BOUTON BURGER MOBILE */}
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-white p-2"
+          >
+            {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
         </div>
+
+        {/* MENU MOBILE DÉROULANT */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-[#1e2a5e] border-t border-blue-800">
+            <nav className="flex flex-col p-4 space-y-3 text-white">
+              <Link href="/" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-blue-200">Accueil</Link>
+              <Link href="/formations" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-blue-200">Formations</Link>
+              <Link href="/inscription" onClick={() => setMobileMenuOpen(false)} className="py-2 text-orange-400">Inscription</Link>
+              <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-blue-200">Contact</Link>
+              <Link href="/espace-etudiant" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-blue-200">Espace étudiant</Link>
+            </nav>
+          </div>
+        )}
       </header>
 
       {/* HERO SLIDER */}
@@ -111,7 +128,7 @@ export default function Inscription() {
           <div
             key={index}
             className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentSlide? 'opacity-100' : 'opacity-0'
+              index === currentSlide ? 'opacity-100' : 'opacity-0'
             }`}
           >
             <Image
@@ -144,7 +161,7 @@ export default function Inscription() {
               key={index}
               onClick={() => setCurrentSlide(index)}
               className={`w-3 h-3 rounded-full transition ${
-                index === currentSlide? 'bg-white' : 'bg-white/50'
+                index === currentSlide ? 'bg-white' : 'bg-white/50'
               }`}
             />
           ))}
@@ -273,12 +290,6 @@ export default function Inscription() {
                       {errors.confirmPassword && <p className="text-red-500 text-xs mt-1 font-medium">{errors.confirmPassword}</p>}
                     </div>
 
-                    {errors.submit && (
-                      <p className="text-red-500 text-sm text-center bg-red-50 py-2 rounded-lg font-medium">
-                        {errors.submit}
-                      </p>
-                    )}
-
                     <button
                       type="submit"
                       disabled={isSubmitting}
@@ -289,7 +300,7 @@ export default function Inscription() {
 
                     <p className="text-center text-sm text-gray-600">
                       Déjà inscrit ?{' '}
-                      <Link href="/connexion" className="text-blue-600 font-black hover:underline">
+                      <Link href="/login" className="text-blue-600 font-black hover:underline">
                         Se connecter
                       </Link>
                     </p>

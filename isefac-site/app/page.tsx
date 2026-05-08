@@ -49,10 +49,10 @@ export default function Home() {
 
   return (
     <main className={`min-h-screen ${montserrat.className}`}>
-      {/* HEADER CORRIGÉ AVEC PUBLIC CIBLE */}
-      <header className={`fixed top-0 w-full z-50 transition-all duration-500 ${
+      {/* HEADER : TRANSPARENT EN HAUT, BLEU QUAND TU SCROLL */}
+      <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${
         scrolled
-   ? 'bg-[#1e2a5e] shadow-xl py-4'
+          ? 'bg-[#1e2a5e] shadow-xl py-4'
           : 'bg-transparent py-5'
       }`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
@@ -77,7 +77,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* HERO - PAS DE PADDING CAR HEADER TRANSPARENT */}
+      {/* HERO */}
       <section className="relative h-screen w-full overflow-hidden">
         {slides.map((slide, index) => (
           <div
@@ -98,7 +98,6 @@ export default function Home() {
           </div>
         ))}
 
-        {/* TEXTE CENTRAL - DESCENDU */}
         <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center z-10 px-4 pt-32">
           <p className="text-base md:text-xl mb-4 drop-shadow-lg uppercase tracking-wider font-semibold">
             INSTITUT DES SCIENCES DE L'ENSEIGNEMENT ET DE LA FORMATION EN ADMINISTRATION ET COMMERCE
@@ -233,15 +232,14 @@ export default function Home() {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
           }
-.animate-scroll {
+          .animate-scroll {
             animation: scroll 20s linear infinite;
           }
-.animate-scroll:hover {
+          .animate-scroll:hover {
             animation-play-state: paused;
           }
         `}</style>
       </section>
-
     </main>
   )
 }

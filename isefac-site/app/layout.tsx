@@ -13,9 +13,6 @@ const montserrat = Montserrat({
   weight: ['400', '600', '700', '800', '900']
 })
 
-// SUPPRIME ce bloc metadata d'ici
-// export const metadata: Metadata = {...}
-
 export default function RootLayout({
   children,
 }: {
@@ -39,6 +36,7 @@ export default function RootLayout({
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50)
     window.addEventListener('scroll', handleScroll)
+    handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
@@ -46,32 +44,39 @@ export default function RootLayout({
     setMobileMenuOpen(false)
   }, [pathname])
 
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen? 'hidden' : 'unset'
+  }, [mobileMenuOpen])
+
   return (
     <html lang="fr">
       <body className={montserrat.className}>
+        {/* HEADER UNIQUE - TRANSPARENT ET REDUIT AU REPOS */}
         <header className={`fixed top-0 left-0 right-0 w-full z-[9999] transition-all duration-300 ${
-          scrolled? 'bg-[#1e2a5e] shadow-xl py-4' : 'bg-[#1e2a5e] py-5'
+          scrolled? 'bg-[#1e2a5e] shadow-xl py-3 md:py-4' : 'bg-transparent py-2 md:py-3'
         }`}>
           <div className="max-w-7xl mx-auto px-4 md:px-6 flex justify-between items-center">
             <Link href="/">
               <Image
                 src="/logo-isefac.jpeg"
                 alt="ISEFAC"
-                width={70}
-                height={70}
-                className="bg-white p-2 rounded-lg object-contain"
+                width={scrolled? 70 : 60}
+                height={scrolled? 70 : 60}
+                className={`bg-white p-1.5 md:p-2 rounded-lg object-contain transition-all duration-300 ${
+                  scrolled? 'md:w- md:h-' : 'md:w- md:h-'
+                } w- h-`}
                 priority
               />
             </Link>
 
-            <nav className="hidden md:flex space-x-8 text-white font-medium">
+            <nav className="hidden md:flex space-x-8 text-white font-medium drop-shadow-lg">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`hover:text-orange-300 transition ${
-                    pathname === link.href? 'text-orange-400' : 'text-white'
-                  }`}
+                  className={`hover:text-blue-300 transition ${
+                    pathname === link.href? 'text-blue-400' : 'text-white'
+                  } ${scrolled? 'text-base' : 'text-sm'}`}
                 >
                   {link.label}
                 </Link>
@@ -80,42 +85,55 @@ export default function RootLayout({
 
             <Link
               href="/inscription"
-              className="hidden md:block bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-bold transition"
+              className={`hidden md:block bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-bold transition ${
+                scrolled? 'px-6 py-3 text-base' : 'px-4 py-2 text-sm'
+              }`}
             >
               S'inscrire
             </Link>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden text-white p-2 bg-black/40 rounded-lg"
+              className={`md:hidden text-white p-2 rounded-lg relative z-[99999] transition ${
+                scrolled? 'bg-black/40' : 'bg-black/60'
+              }`}
             >
-              {mobileMenuOpen? <X size={28} /> : <Menu size={28} />}
+              {mobileMenuOpen? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
-
-          {mobileMenuOpen && (
-            <div className="md:hidden absolute top-full left-0 w-full bg-[#1e2a5e] border-t border-blue-800 z-[9999]">
-              <nav className="flex flex-col px-6 py-4 space-y-2">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`py-3 px-4 rounded-lg font-bold transition ${
-                      pathname === link.href
-                      ? 'bg-orange-500 text-white'
-                        : 'text-white hover:bg-blue-800'
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
-            </div>
-          )}
         </header>
 
-        <main className="pt-32">
+        {/* MENU MOBILE */}
+        {mobileMenuOpen && (
+          <div className="md:hidden fixed inset-0 bg-[#1e2a5e] z-[9998] pt-20 overflow-y-auto">
+            <nav className="flex flex-col px-6 py-4 space-y-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`py-3 px-4 rounded-lg font-bold transition ${
+                    pathname === link.href
+                 ? 'bg-blue-500 text-white'
+                      : 'text-white hover:bg-blue-800'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+
+              <Link
+                href="/inscription"
+                onClick={() => setMobileMenuOpen(false)}
+                className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg font-bold text-center mt-4"
+              >
+                S'inscrire
+              </Link>
+            </nav>
+          </div>
+        )}
+
+        <main>
           {children}
         </main>
       </body>

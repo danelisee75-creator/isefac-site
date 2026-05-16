@@ -1,7 +1,6 @@
 "use client"
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
 import { Montserrat } from 'next/font/google'
 import { GraduationCap, Globe, Briefcase, CheckCircle2, Scale, Banknote, Users, Truck } from 'lucide-react'
 
@@ -11,55 +10,21 @@ const montserrat = Montserrat({
 })
 
 export default function APropos() {
-  const [scrolled, setScrolled] = useState(false)
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
   return (
     <main className={`min-h-screen ${montserrat.className}`}>
-      {/* HEADER IDENTIQUE A LA HOME */}
-      <header className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-        scrolled
-   ? 'bg-[#1e2a5e] shadow-xl py-4'
-          : 'bg-transparent py-5'
-      }`}>
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-          <Image
-            src="/logo-isefac.jpeg"
-            alt="ISEFAC"
-            width={70}
-            height={70}
-            className="bg-white p-2 rounded-lg object-contain"
-          />
-          <nav className="hidden md:flex space-x-8 text-white font-medium drop-shadow-lg">
-            <Link href="/" className="hover:text-blue-200">Accueil</Link>
-            <Link href="/a-propos" className="text-orange-400 hover:text-orange-300">A propos</Link>
-            <Link href="/formations" className="hover:text-blue-200">Formations</Link>
-            <a href="/#public" className="hover:text-blue-200">Public cible</a>
-            <a href="/#contact" className="hover:text-blue-200">Contact</a>
-            <Link href="/espace-etudiant" className="hover:text-blue-200">Espace étudiant</Link>
-            <a href="/#faq" className="hover:text-blue-200">FAQ</a>
-          </nav>
-        </div>
-      </header>
-
-      {/* Hero A Propos - AVEC IMAGE DE FOND */}
+      {/* Hero A Propos - OPACITÉ AUGMENTÉE + PAS DE HEADER */}
       <section className="relative bg-[#1e2a4a] text-white pt-32 pb-20 px-6 overflow-hidden">
-        {/* Image de fond */}
+        {/* Image de fond - OPACITÉ À 40% au lieu de 20% */}
         <Image
           src="https://images.unsplash.com/photo-1562774053-701939374585?w=1920&q=80"
           alt="Campus ISEFAC"
           fill
-          className="object-cover opacity-20"
+          className="object-cover opacity-40"
           priority
           unoptimized
         />
-        {/* Overlay bleu foncé */}
-        <div className="absolute inset-0 bg-[#1e2a4a]/70" />
+        {/* Overlay réduit pour laisser voir l'image */}
+        <div className="absolute inset-0 bg-[#1e2a4a]/50" />
         
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <h1 className="text-5xl md:text-6xl font-bold mb-6 drop-shadow-2xl">

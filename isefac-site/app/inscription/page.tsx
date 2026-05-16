@@ -1,9 +1,10 @@
 "use client"
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { Montserrat } from 'next/font/google'
-import { MapPin, Phone, Mail, UserPlus, Lock, Mail as MailIcon, User, ChevronRight, Menu, X } from "lucide-react"
+import { MapPin, Phone, Mail, UserPlus, Lock, Mail as MailIcon, User } from "lucide-react"
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -12,9 +13,7 @@ const montserrat = Montserrat({
 
 export default function Inscription() {
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [scrolled, setScrolled] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false) // ← AJOUTÉ
   
   const [formData, setFormData] = useState({
     name: '',
@@ -41,9 +40,6 @@ export default function Inscription() {
 
   useEffect(() => {
     setMounted(true)
-    const handleScroll = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +63,6 @@ export default function Inscription() {
     
     setIsSubmitting(true)
     // TODO: remplacer par ta server action
-    // await signupAction(formData)
     await new Promise(r => setTimeout(r, 1500))
     setIsSubmitting(false)
     setSuccess(true)
@@ -77,58 +72,13 @@ export default function Inscription() {
 
   return (
     <main className={`min-h-screen ${montserrat.className}`}>
-      {/* HEADER */}
-      <header className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-        scrolled ? 'bg-[#1e2a5e] shadow-xl py-4' : 'bg-transparent py-5'
-      }`}>
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-          <Image
-            src="/logo-isefac.jpeg"
-            alt="ISEFAC"
-            width={70}
-            height={70}
-            className="bg-white p-2 rounded-lg object-contain"
-          />
-          
-          {/* MENU PC */}
-          <nav className="hidden md:flex space-x-8 text-white font-medium drop-shadow-lg">
-            <Link href="/" className="hover:text-blue-200">Accueil</Link>
-            <Link href="/formations" className="hover:text-blue-200">Formations</Link>
-            <Link href="/inscription" className="text-orange-400">Inscription</Link>
-            <Link href="/contact" className="hover:text-blue-200">Contact</Link>
-            <Link href="/espace-etudiant" className="hover:text-blue-200">Espace étudiant</Link>
-          </nav>
-
-          {/* BOUTON BURGER MOBILE */}
-          <button 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-white p-2"
-          >
-            {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
-        </div>
-
-        {/* MENU MOBILE DÉROULANT */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-[#1e2a5e] border-t border-blue-800">
-            <nav className="flex flex-col p-4 space-y-3 text-white">
-              <Link href="/" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-blue-200">Accueil</Link>
-              <Link href="/formations" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-blue-200">Formations</Link>
-              <Link href="/inscription" onClick={() => setMobileMenuOpen(false)} className="py-2 text-orange-400">Inscription</Link>
-              <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-blue-200">Contact</Link>
-              <Link href="/espace-etudiant" onClick={() => setMobileMenuOpen(false)} className="py-2 hover:text-blue-200">Espace étudiant</Link>
-            </nav>
-          </div>
-        )}
-      </header>
-
       {/* HERO SLIDER */}
-      <section className="relative h-screen w-full overflow-hidden">
+      <section className="relative h-[calc(100vh-80px)] w-full overflow-hidden">
         {slides.map((slide, index) => (
           <div
             key={index}
             className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentSlide ? 'opacity-100' : 'opacity-0'
+              index === currentSlide? 'opacity-100' : 'opacity-0'
             }`}
           >
             <Image
@@ -161,7 +111,7 @@ export default function Inscription() {
               key={index}
               onClick={() => setCurrentSlide(index)}
               className={`w-3 h-3 rounded-full transition ${
-                index === currentSlide ? 'bg-white' : 'bg-white/50'
+                index === currentSlide? 'bg-white' : 'bg-white/50'
               }`}
             />
           ))}
@@ -215,7 +165,7 @@ export default function Inscription() {
 
               {/* Colonne droite : form */}
               <div className="bg-white border border-gray-200 rounded-2xl shadow-xl p-8">
-                {success ? (
+                {success? (
                   <div className="text-center py-8">
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                       <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -295,7 +245,7 @@ export default function Inscription() {
                       disabled={isSubmitting}
                       className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white py-3.5 rounded-xl font-black text-base shadow-xl transition hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {isSubmitting ? 'Création...' : 'Créer mon compte'}
+                      {isSubmitting? 'Création...' : 'Créer mon compte'}
                     </button>
 
                     <p className="text-center text-sm text-gray-600">
@@ -314,7 +264,7 @@ export default function Inscription() {
 
         {/* FOOTER */}
         <footer className="bg-[#1e2a5e] text-white py-10">
-          <div className="max-w-7xl mx-auto px-6"/>
+          <div className="max-w-7xl mx-auto px-6">
             <div className="text-center space-y-3">
               <p className="font-black text-xl">École Supérieure Professionnelle ISEFAC</p>
               <p className="text-sm text-blue-100">Reconnue par arrêté n°000324/MENICFP/SG/DGFP/DFP</p>
@@ -327,6 +277,7 @@ export default function Inscription() {
                   <MapPin size={16} />
                   <span>Campus Espace PME Quartier AWENDJE</span>
                 </div>
+              </div>
               <div className="flex flex-wrap justify-center gap-8 text-sm pt-2">
                 <div className="flex items-center gap-2">
                   <Phone size={16} />

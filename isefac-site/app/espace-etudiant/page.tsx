@@ -1,4 +1,5 @@
 "use client"
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
@@ -6,13 +7,13 @@ import { useRouter } from 'next/navigation'
 import { Montserrat } from 'next/font/google'
 import { createBrowserClient } from '@supabase/ssr'
 import {
-  User,
   LogOut,
   Bell,
   ChevronRight,
   Clock,
   FileText,
-  MessageSquare
+  MessageSquare,
+  MapPin
 } from 'lucide-react'
 
 const montserrat = Montserrat({
@@ -22,7 +23,6 @@ const montserrat = Montserrat({
 
 export default function EspaceEtudiant() {
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [scrolled, setScrolled] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
@@ -136,12 +136,6 @@ export default function EspaceEtudiant() {
     return () => clearInterval(timer)
   }, [slides.length])
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
   const handleSignOut = async () => {
     await supabase.auth.signOut()
     router.push('/')
@@ -165,37 +159,7 @@ export default function EspaceEtudiant() {
 
   return (
     <main className={`min-h-screen ${montserrat.className}`}>
-      <header className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-        scrolled
-? 'bg-[#1e2a5e] shadow-xl py-4'
-          : 'bg-transparent py-5'
-      }`}>
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-          <Image
-            src="/logo-isefac.jpeg"
-            alt="ISEFAC"
-            width={70}
-            height={70}
-            className="bg-white p-2 rounded-lg object-contain"
-          />
-          <nav className="hidden md:flex space-x-8 text-white font-medium drop-shadow-lg">
-            <Link href="/" className="hover:text-blue-200">Accueil</Link>
-            <Link href="/a-propos" className="hover:text-blue-200">A propos</Link>
-            <Link href="/formations" className="hover:text-blue-200">Formations</Link>
-            <Link href="/contact" className="hover:text-blue-200">Contact</Link>
-            <Link href="/espace-etudiant" className="text-orange-400 hover:text-orange-300">Espace étudiant</Link>
-            <Link href="/faq" className="hover:text-blue-200">FAQ</Link>
-          </nav>
-          <button
-            onClick={handleSignOut}
-            className="hidden md:flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg font-bold transition shadow-lg"
-          >
-            <LogOut size={18} />
-            Déconnexion
-          </button>
-        </div>
-      </header>
-
+      {/* HERO - pt-20 pour mobile, pas de header ici */}
       <section className="relative h-screen w-full overflow-hidden">
         {slides.map((slide, index) => (
           <div
@@ -216,40 +180,36 @@ export default function EspaceEtudiant() {
           </div>
         ))}
 
-        <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center z-10 px-4 pt-32">
-          <p className="text-base md:text-xl mb-4 drop-shadow-lg uppercase tracking-wider font-semibold text-blue-300">
+        <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center z-10 px-4 pt-20">
+          <p className="text-sm md:text-xl mb-3 md:mb-4 drop-shadow-lg uppercase tracking-wider font-semibold text-[#F4B400]">
             ESPACE ÉTUDIANT ISEFAC BUSINESS SCHOOL
           </p>
-          <h1 className="text-4xl md:text-6xl font-black mb-2 drop-shadow-2xl">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black mb-2 drop-shadow-2xl break-words px-2">
             BIENVENUE, {user?.email?.split('@')[0]?.toUpperCase()} 👋
           </h1>
-          <p className="text-xl md:text-2xl mb-4 font-bold text-orange-400 drop-shadow-lg">
+          <p className="text-lg md:text-2xl mb-3 font-bold text-orange-400 drop-shadow-lg">
             Continue ton parcours d'excellence
           </p>
-          <p className="text-lg md:text-xl mb-8 drop-shadow-lg max-w-3xl font-medium">
+          <p className="text-base md:text-xl mb-6 md:mb-8 drop-shadow-lg max-w-3xl font-medium px-2">
             Accède à tes cours, certifications et ressources en un clic
           </p>
 
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Link href="#dashboard" className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105">
-              <Image
-                src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=100&q=80"
-                alt="Cours"
-                width={24}
-                height={24}
-                className="rounded object-cover"
-                unoptimized
-              />
+          <div className="flex flex-wrap gap-3 md:gap-4 justify-center px-2">
+            <Link href="#dashboard" className="bg-blue-600 hover:bg-blue-700 px-4 md:px-6 py-2.5 md:py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105 text-sm md:text-base">
+              <FileText size={18} />
               Mes Cours
             </Link>
-            <Link href="#notifications" className="bg-sky-500 hover:bg-sky-600 px-6 py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105">
-              <Bell size={20} />
+            <Link href="#notifications" className="bg-sky-500 hover:bg-sky-600 px-4 md:px-6 py-2.5 md:py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105 text-sm md:text-base">
+              <Bell size={18} />
               Notifications
             </Link>
-            <Link href="/contact" className="bg-blue-800 hover:bg-blue-900 px-6 py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105">
-              <MessageSquare size={20} />
-              Support
-            </Link>
+            <button
+              onClick={handleSignOut}
+              className="bg-red-600 hover:bg-red-700 px-4 md:px-6 py-2.5 md:py-3 rounded-md font-bold flex items-center gap-2 transition hover:scale-105 text-sm md:text-base"
+            >
+              <LogOut size={18} />
+              Déconnexion
+            </button>
           </div>
         </div>
 
@@ -266,20 +226,20 @@ export default function EspaceEtudiant() {
         </div>
       </section>
 
-      <section id="dashboard" className="bg-white py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl md:text-5xl font-black mb-6 text-gray-900 text-center">
+      <section id="dashboard" className="bg-white py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
+          <h2 className="text-3xl md:text-5xl font-black mb-4 md:mb-6 text-gray-900 text-center">
             TABLEAU DE BORD
           </h2>
-          <p className="text-xl text-gray-700 font-semibold mb-12 text-center">
+          <p className="text-lg md:text-xl text-gray-700 font-semibold mb-8 md:mb-12 text-center">
             Vue d'ensemble de ton parcours académique
           </p>
-          <div className="w-24 h-1 bg-blue-600 mx-auto mb-16"></div>
+          <div className="w-24 h-1 bg-blue-600 mx-auto mb-12 md:mb-16"></div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-12 md:mb-16">
             {stats.map((stat, i) => (
               <div key={i} className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all hover:scale-105 border border-gray-100 overflow-hidden">
-                <div className="relative h-32">
+                <div className="relative h-24 md:h-32">
                   <Image
                     src={stat.image}
                     alt={stat.texte}
@@ -289,41 +249,42 @@ export default function EspaceEtudiant() {
                   />
                   <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-90`}></div>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <p className="text-5xl font-black text-white drop-shadow-lg">{stat.chiffre}</p>
+                    <p className="text-3xl md:text-5xl font-black text-white drop-shadow-lg">{stat.chiffre}</p>
                   </div>
                 </div>
-                <div className="p-4">
-                  <p className="text-gray-900 text-sm font-black uppercase tracking-wide">{stat.texte}</p>
+                <div className="p-3 md:p-4">
+                  <p className="text-gray-900 text-xs md:text-sm font-black uppercase tracking-wide">{stat.texte}</p>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-6 md:gap-8">
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white rounded-3xl p-8 shadow-xl border-2 border-gray-100">
-                <div className="flex items-center justify-between mb-8">
-                  <h3 className="text-3xl font-black text-gray-900 flex items-center gap-3">
+              <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border-2 border-gray-100">
+                <div className="flex items-center justify-between mb-6 md:mb-8">
+                  <h3 className="text-2xl md:text-3xl font-black text-gray-900 flex items-center gap-3">
                     <Image
                       src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=100&q=80"
                       alt="Formation"
-                      width={40}
-                      height={40}
+                      width={32}
+                      height={32}
                       className="rounded-xl object-cover"
                       unoptimized
                     />
-                    Mes Formations
+                    <span className="hidden sm:inline">Mes Formations</span>
+                    <span className="sm:hidden">Formations</span>
                   </h3>
-                  <Link href="/formations" className="text-blue-600 hover:text-blue-800 font-bold text-sm flex items-center gap-1">
-                    Catalogue <ChevronRight size={18} />
+                  <Link href="/formations" className="text-blue-600 hover:text-blue-800 font-bold text-xs md:text-sm flex items-center gap-1">
+                    Catalogue <ChevronRight size={16} />
                   </Link>
                 </div>
 
-                <div className="space-y-5">
+                <div className="space-y-4 md:space-y-5">
                   {coursRecents.map((cours, i) => (
                     <div key={i} className="border-2 border-gray-100 rounded-2xl overflow-hidden hover:border-blue-400 hover:shadow-lg transition-all">
-                      <div className="flex gap-4">
-                        <div className="relative w-32 h-32 flex-shrink-0">
+                      <div className="flex flex-col sm:flex-row gap-0 sm:gap-4">
+                        <div className="relative w-full sm:w-32 h-32 flex-shrink-0">
                           <Image
                             src={cours.image}
                             alt={cours.titre}
@@ -333,17 +294,17 @@ export default function EspaceEtudiant() {
                           />
                           <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-black ${
                             cours.statut === 'Terminé'
-                        ? 'bg-green-500 text-white'
+                      ? 'bg-green-500 text-white'
                               : 'bg-blue-500 text-white'
                           }`}>
                             {cours.statut}
                           </div>
                         </div>
                         <div className="flex-1 p-4">
-                          <h4 className="font-black text-lg text-gray-900 mb-1">{cours.titre}</h4>
-                          <p className="text-sm text-gray-600 font-semibold mb-2">{cours.module}</p>
-                          <div className="flex items-center gap-2 text-sm text-gray-700 font-medium mb-3">
-                            <Clock size={16} />
+                          <h4 className="font-black text-base md:text-lg text-gray-900 mb-1">{cours.titre}</h4>
+                          <p className="text-xs md:text-sm text-gray-600 font-semibold mb-2">{cours.module}</p>
+                          <div className="flex items-center gap-2 text-xs md:text-sm text-gray-700 font-medium mb-3">
+                            <Clock size={14} />
                             <span>{cours.prochainCours}</span>
                           </div>
                           <div className="space-y-1">
@@ -365,40 +326,40 @@ export default function EspaceEtudiant() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-3xl p-8 shadow-xl border-2 border-gray-100">
-                <h3 className="text-3xl font-black text-gray-900 mb-6 flex items-center gap-3">
+              <div className="bg-white rounded-3xl p-6 md:p-8 shadow-xl border-2 border-gray-100">
+                <h3 className="text-2xl md:text-3xl font-black text-gray-900 mb-6 flex items-center gap-3">
                   <Image
                     src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=100&q=80"
                     alt="Agenda"
-                    width={40}
-                    height={40}
+                    width={32}
+                    height={32}
                     className="rounded-xl object-cover"
                     unoptimized
                   />
                   Prochains Événements
                 </h3>
                 <div className="space-y-4">
-                  <div className="flex gap-4 p-5 bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl border-2 border-blue-200">
-                    <div className="bg-blue-600 text-white rounded-xl p-4 text-center min-w-20 shadow-lg">
-                      <p className="text-3xl font-black">09</p>
+                  <div className="flex gap-4 p-4 md:p-5 bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl border-2 border-blue-200">
+                    <div className="bg-blue-600 text-white rounded-xl p-3 md:p-4 text-center min-w- md:min-w-20 shadow-lg">
+                      <p className="text-2xl md:text-3xl font-black">09</p>
                       <p className="text-xs font-bold">MAI</p>
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-black text-gray-900 text-lg mb-1">Évaluation Marketing Digital</h4>
-                      <p className="text-sm text-gray-700 font-semibold">14h00 - Salle B12 - Prof. Mbadinga</p>
+                      <h4 className="font-black text-gray-900 text-base md:text-lg mb-1">Évaluation Marketing Digital</h4>
+                      <p className="text-xs md:text-sm text-gray-700 font-semibold">14h00 - Salle B12 - Prof. Mbadinga</p>
                       <span className="inline-block mt-2 px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full">
                         Important
                       </span>
                     </div>
                   </div>
-                  <div className="flex gap-4 p-5 bg-gray-50 rounded-2xl border-2 border-gray-200">
-                    <div className="bg-gray-700 text-white rounded-xl p-4 text-center min-w-20 shadow-lg">
-                      <p className="text-3xl font-black">15</p>
+                  <div className="flex gap-4 p-4 md:p-5 bg-gray-50 rounded-2xl border-2 border-gray-200">
+                    <div className="bg-gray-700 text-white rounded-xl p-3 md:p-4 text-center min-w- md:min-w-20 shadow-lg">
+                      <p className="text-2xl md:text-3xl font-black">15</p>
                       <p className="text-xs font-bold">MAI</p>
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-black text-gray-900 text-lg mb-1">Conférence Entrepreneuriat</h4>
-                      <p className="text-sm text-gray-700 font-semibold">10h00 - Amphithéâtre Principal</p>
+                      <h4 className="font-black text-gray-900 text-base md:text-lg mb-1">Conférence Entrepreneuriat</h4>
+                      <p className="text-xs md:text-sm text-gray-700 font-semibold">10h00 - Amphithéâtre Principal</p>
                     </div>
                   </div>
                 </div>
@@ -408,7 +369,7 @@ export default function EspaceEtudiant() {
             <div className="space-y-6">
               <div className="bg-gradient-to-br from-[#1e2a5e] to-[#162042] rounded-3xl p-6 text-white shadow-2xl">
                 <div className="text-center mb-6">
-                  <div className="relative w-24 h-24 mx-auto mb-4">
+                  <div className="relative w-20 h-20 md:w-24 md:h-24 mx-auto mb-4">
                     <Image
                       src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80"
                       alt="Profile"
@@ -417,30 +378,30 @@ export default function EspaceEtudiant() {
                       unoptimized
                     />
                   </div>
-                  <h3 className="font-black text-xl">{user?.email?.split('@')[0]}</h3>
-                  <p className="text-blue-200 text-sm font-semibold">Étudiant ISEFAC BS</p>
+                  <h3 className="font-black text-lg md:text-xl break-all">{user?.email?.split('@')[0]}</h3>
+                  <p className="text-blue-200 text-xs md:text-sm font-semibold">Étudiant ISEFAC BS</p>
                 </div>
                 <div className="space-y-3 text-sm">
                   <div className="flex items-center gap-3 p-3 bg-white/10 backdrop-blur rounded-xl">
-                    <FileText size={18} />
-                    <div>
+                    <FileText size={16} className="flex-shrink-0" />
+                    <div className="min-w-0">
                       <p className="text-xs text-blue-200 font-semibold">Email</p>
-                      <p className="font-bold">{user?.email}</p>
+                      <p className="font-bold text-xs md:text-sm break-all">{user?.email}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 p-3 bg-white/10 backdrop-blur rounded-xl">
-                    <Clock size={18} />
+                    <Clock size={16} className="flex-shrink-0" />
                     <div>
                       <p className="text-xs text-blue-200 font-semibold">Inscrit le</p>
-                      <p className="font-bold">{user?.created_at? new Date(user.created_at).toLocaleDateString('fr-FR') : 'N/A'}</p>
+                      <p className="font-bold text-xs md:text-sm">{user?.created_at? new Date(user.created_at).toLocaleDateString('fr-FR') : 'N/A'}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div id="notifications" className="bg-white rounded-3xl p-6 shadow-xl border-2 border-gray-100">
-                <h3 className="text-xl font-black text-gray-900 mb-5 flex items-center gap-2">
-                  <Bell className="text-blue-600" size={24} />
+                <h3 className="text-lg md:text-xl font-black text-gray-900 mb-5 flex items-center gap-2">
+                  <Bell className="text-blue-600" size={22} />
                   Notifications
                 </h3>
                 <div className="space-y-4">
@@ -450,13 +411,13 @@ export default function EspaceEtudiant() {
                         <Image
                           src={notif.image}
                           alt={notif.titre}
-                          width={50}
-                          height={50}
-                          className="rounded-lg object-cover"
+                          width={40}
+                          height={40}
+                          className="rounded-lg object-cover flex-shrink-0"
                           unoptimized
                         />
-                        <div className="flex-1">
-                          <h4 className="font-black text-sm text-gray-900 mb-1">{notif.titre}</h4>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-black text-xs md:text-sm text-gray-900 mb-1">{notif.titre}</h4>
                           <p className="text-xs text-gray-600 mb-1">{notif.desc}</p>
                           <p className="text-xs text-gray-400 font-bold">{notif.date}</p>
                         </div>
@@ -467,43 +428,43 @@ export default function EspaceEtudiant() {
               </div>
 
               <div className="bg-white rounded-3xl p-6 shadow-xl border-2 border-gray-100">
-                <h3 className="text-xl font-black text-gray-900 mb-5">Actions Rapides</h3>
+                <h3 className="text-lg md:text-xl font-black text-gray-900 mb-5">Actions Rapides</h3>
                 <div className="space-y-3">
-                  <Link href="/formations" className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-xl transition group">
+                  <Link href="/formations" className="flex items-center gap-3 p-3 md:p-4 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-xl transition group">
                     <Image
                       src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=100&q=80"
                       alt="Formations"
-                      width={40}
-                      height={40}
-                      className="rounded-lg object-cover"
+                      width={32}
+                      height={32}
+                      className="rounded-lg object-cover flex-shrink-0"
                       unoptimized
                     />
-                    <span className="font-bold text-gray-700 flex-1">Mes Formations</span>
-                    <ChevronRight size={20} className="text-blue-600 group-hover:translate-x-1 transition" />
+                    <span className="font-bold text-gray-700 flex-1 text-sm md:text-base">Mes Formations</span>
+                    <ChevronRight size={18} className="text-blue-600 group-hover:translate-x-1 transition flex-shrink-0" />
                   </Link>
-                  <Link href="/contact" className="flex items-center gap-3 p-4 bg-gradient-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-xl transition group">
+                  <Link href="/contact" className="flex items-center gap-3 p-3 md:p-4 bg-gradient-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-xl transition group">
                     <Image
                       src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=100&q=80"
                       alt="Support"
-                      width={40}
-                      height={40}
-                      className="rounded-lg object-cover"
+                      width={32}
+                      height={32}
+                      className="rounded-lg object-cover flex-shrink-0"
                       unoptimized
                     />
-                    <span className="font-bold text-gray-700 flex-1">Support</span>
-                    <ChevronRight size={20} className="text-purple-600 group-hover:translate-x-1 transition" />
+                    <span className="font-bold text-gray-700 flex-1 text-sm md:text-base">Support</span>
+                    <ChevronRight size={18} className="text-purple-600 group-hover:translate-x-1 transition flex-shrink-0" />
                   </Link>
-                  <button className="w-full flex items-center gap-3 p-4 bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 rounded-xl transition group">
+                  <button className="w-full flex items-center gap-3 p-3 md:p-4 bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 rounded-xl transition group">
                     <Image
                       src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=100&q=80"
                       alt="Certificats"
-                      width={40}
-                      height={40}
-                      className="rounded-lg object-cover"
+                      width={32}
+                      height={32}
+                      className="rounded-lg object-cover flex-shrink-0"
                       unoptimized
                     />
-                    <span className="font-bold text-gray-700 flex-1">Certificats</span>
-                    <ChevronRight size={20} className="text-green-600 group-hover:translate-x-1 transition" />
+                    <span className="font-bold text-gray-700 flex-1 text-left text-sm md:text-base">Certificats</span>
+                    <ChevronRight size={18} className="text-green-600 group-hover:translate-x-1 transition flex-shrink-0" />
                   </button>
                 </div>
               </div>
@@ -511,35 +472,6 @@ export default function EspaceEtudiant() {
           </div>
         </div>
       </section>
-
-      <footer className="bg-[#1e2a5e] text-white py-10">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center space-y-3">
-            <p className="font-black text-xl">École Supérieure Professionnelle ISEFAC</p>
-            <p className="text-sm text-blue-100">Reconnue par arrêté n°000324/MENICFP/SG/DGFP/DFP</p>
-            <div className="flex flex-wrap justify-center gap-8 text-sm pt-4">
-              <div className="flex items-center gap-2">
-                <MessageSquare size={16} />
-                <span>Zone Owendo Campus Quartier AWOUNGOU</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MessageSquare size={16} />
-                <span>Campus Espace PME Quartier AWENDJE</span>
-              </div>
-            </div>
-            <div className="flex flex-wrap justify-center gap-8 text-sm pt-2">
-              <div className="flex items-center gap-2">
-                <Clock size={16} />
-                <span>+241 74804937 / 65604787</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FileText size={16} />
-                <span>isefacgabon@gmail.com</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
     </main>
   )
 }

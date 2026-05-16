@@ -1,7 +1,8 @@
 "use client"
+
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Montserrat } from 'next/font/google'
 import { ChevronDown, HelpCircle, Search } from 'lucide-react'
 
@@ -11,15 +12,8 @@ const montserrat = Montserrat({
 })
 
 export default function FAQ() {
-  const [scrolled, setScrolled] = useState(false)
   const [openIndex, setOpenIndex] = useState<number | null>(0)
   const [searchTerm, setSearchTerm] = useState('')
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
 
   const faqs = [
     {
@@ -124,33 +118,8 @@ export default function FAQ() {
 
   return (
     <main className={`min-h-screen ${montserrat.className}`}>
-      {/* HEADER IDENTIQUE */}
-      <header className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-        scrolled
- ? 'bg-[#1e2a5e] shadow-xl py-4'
-          : 'bg-transparent py-5'
-      }`}>
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-          <Image
-            src="/logo-isefac.jpeg"
-            alt="ISEFAC"
-            width={70}
-            height={70}
-            className="bg-white p-2 rounded-lg object-contain"
-          />
-          <nav className="hidden md:flex space-x-8 text-white font-medium drop-shadow-lg">
-            <Link href="/" className="hover:text-blue-200">Accueil</Link>
-            <Link href="/a-propos" className="hover:text-blue-200">A propos</Link>
-            <Link href="/formations" className="hover:text-blue-200">Formations</Link>
-            <Link href="/contact" className="hover:text-blue-200">Contact</Link>
-            <Link href="/espace-etudiant" className="hover:text-blue-200">Espace étudiant</Link>
-            <Link href="/faq" className="text-orange-400 hover:text-orange-300">FAQ</Link>
-          </nav>
-        </div>
-      </header>
-
-      {/* Hero FAQ */}
-      <section className="relative bg-[#1e2a4a] text-white pt-32 pb-20 px-6 overflow-hidden">
+      {/* Hero FAQ - pt-20 pour mobile au lieu de pt-32 */}
+      <section className="relative bg-[#1e2a4a] text-white pt-20 pb-16 md:pb-20 px-4 md:px-6 overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=1920&q=80"
           alt="FAQ ISEFAC"
@@ -162,37 +131,37 @@ export default function FAQ() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#1e2a4a]/80 to-[#1e2a4a]/95" />
 
         <div className="max-w-6xl mx-auto text-center relative z-10">
-          <div className="w-16 h-16 bg-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <HelpCircle className="w-9 h-9 text-white" />
+          <div className="w-14 h-14 md:w-16 md:h-16 bg-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-5 md:mb-6">
+            <HelpCircle className="w-7 h-7 md:w-9 md:h-9 text-white" />
           </div>
-          <h1 className="text-5xl md:text-7xl font-black mb-6 drop-shadow-2xl">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black mb-4 md:mb-6 drop-shadow-2xl">
             QUESTIONS FRÉQUENTES
           </h1>
-          <p className="text-xl md:text-2xl text-blue-200 max-w-3xl mx-auto font-medium">
+          <p className="text-lg md:text-2xl text-blue-200 max-w-3xl mx-auto font-medium">
             Trouvez rapidement les réponses à vos questions
           </p>
-          <div className="w-24 h-1 bg-orange-500 mx-auto mt-8"></div>
+          <div className="w-24 h-1 bg-orange-500 mx-auto mt-6 md:mt-8"></div>
         </div>
       </section>
 
       {/* Barre de recherche */}
-      <section className="py-12 px-6 bg-white border-b">
+      <section className="py-8 md:py-12 px-4 md:px-6 bg-white border-b">
         <div className="max-w-3xl mx-auto">
           <div className="relative">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-400" />
+            <Search className="absolute left-4 md:left-5 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-gray-400" />
             <input
               type="text"
               placeholder="Rechercher une question..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-14 pr-6 py-5 rounded-2xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 text-lg font-medium shadow-sm"
+              className="w-full pl-12 md:pl-14 pr-4 md:pr-6 py-4 md:py-5 rounded-2xl border-2 border-gray-200 focus:outline-none focus:border-blue-500 text-base md:text-lg font-medium shadow-sm"
             />
           </div>
         </div>
       </section>
 
       {/* FAQ Accordéon */}
-      <section className="py-20 px-6 bg-gradient-to-b from-white to-gray-50">
+      <section className="py-16 md:py-20 px-4 md:px-6 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-4xl mx-auto">
           {filteredFaqs.length === 0? (
             <div className="text-center py-16">
@@ -201,13 +170,13 @@ export default function FAQ() {
             </div>
           ) : (
             filteredFaqs.map((categorie, catIndex) => (
-              <div key={catIndex} className="mb-12">
-                <h2 className="text-3xl font-black text-gray-900 mb-6 flex items-center gap-3">
-                  <div className="w-2 h-8 bg-blue-600 rounded-full"></div>
+              <div key={catIndex} className="mb-10 md:mb-12">
+                <h2 className="text-2xl md:text-3xl font-black text-gray-900 mb-5 md:mb-6 flex items-center gap-3">
+                  <div className="w-2 h-6 md:h-8 bg-blue-600 rounded-full"></div>
                   {categorie.categorie}
                 </h2>
                 
-                <div className="space-y-4">
+                <div className="space-y-3 md:space-y-4">
                   {categorie.questions.map((faq, faqIndex) => {
                     const globalIndex = catIndex * 100 + faqIndex
                     const isOpen = openIndex === globalIndex
@@ -219,13 +188,13 @@ export default function FAQ() {
                       >
                         <button
                           onClick={() => setOpenIndex(isOpen ? null : globalIndex)}
-                          className="w-full px-6 md:px-8 py-6 flex items-center justify-between text-left hover:bg-gray-50 transition"
+                          className="w-full px-5 md:px-8 py-5 md:py-6 flex items-center justify-between text-left hover:bg-gray-50 transition"
                         >
-                          <span className="text-lg md:text-xl font-bold text-gray-900 pr-4">
+                          <span className="text-base md:text-xl font-bold text-gray-900 pr-4">
                             {faq.q}
                           </span>
                           <ChevronDown
-                            className={`w-6 h-6 text-blue-600 flex-shrink-0 transition-transform duration-300 ${
+                            className={`w-5 h-5 md:w-6 md:h-6 text-blue-600 flex-shrink-0 transition-transform duration-300 ${
                               isOpen ? 'rotate-180' : ''
                             }`}
                           />
@@ -236,9 +205,9 @@ export default function FAQ() {
                             isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                           } overflow-hidden`}
                         >
-                          <div className="px-6 md:px-8 pb-6 pt-2">
+                          <div className="px-5 md:px-8 pb-5 md:pb-6 pt-2">
                             <div className="border-t border-gray-200 pt-4">
-                              <p className="text-gray-700 text-lg leading-relaxed">
+                              <p className="text-gray-700 text-base md:text-lg leading-relaxed">
                                 {faq.r}
                               </p>
                             </div>
@@ -255,17 +224,17 @@ export default function FAQ() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-6 bg-gradient-to-r from-[#1e2a5e] to-[#162042]">
+      <section className="py-16 md:py-20 px-4 md:px-6 bg-gradient-to-r from-[#1e2a5e] to-[#162042]">
         <div className="max-w-4xl mx-auto text-center text-white">
-          <h2 className="text-4xl md:text-5xl font-black mb-6">
+          <h2 className="text-3xl md:text-5xl font-black mb-5 md:mb-6">
             Vous ne trouvez pas votre réponse ?
           </h2>
-          <p className="text-xl text-blue-200 mb-8">
+          <p className="text-lg md:text-xl text-blue-200 mb-6 md:mb-8">
             Notre équipe est là pour vous aider
           </p>
           <Link
             href="/contact"
-            className="inline-block bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white px-10 py-5 rounded-xl font-bold text-lg shadow-xl transition hover:scale-105"
+            className="inline-block bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white px-8 md:px-10 py-4 md:py-5 rounded-xl font-bold text-base md:text-lg shadow-xl transition hover:scale-105"
           >
             Contactez-nous
           </Link>

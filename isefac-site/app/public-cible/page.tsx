@@ -1,16 +1,16 @@
 "use client"
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { Montserrat } from 'next/font/google'
-import { 
-  GraduationCap, 
-  Briefcase, 
-  RefreshCw, 
+import {
+  GraduationCap,
+  Briefcase,
+  RefreshCw,
   Globe,
-  Target,
-  ArrowRight,
-  CheckCircle
+  CheckCircle,
+  ArrowRight
 } from 'lucide-react'
 
 const montserrat = Montserrat({
@@ -19,13 +19,14 @@ const montserrat = Montserrat({
 })
 
 export default function PublicCible() {
-  const [scrolled, setScrolled] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [mounted, setMounted] = useState(false)
 
+  // HERO AVEC PERSONNES NOIRES
   const slides = [
-    'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1920&q=80',
-    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&q=80',
-    'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=1920&q=80'
+    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1920&q=80', // Étudiante noire diplômée
+    'https://images.unsplash.com/photo-1531384441138-2736e62e0919?w=1920&q=80', // Pro noir au bureau
+    'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=1920&q=80'  // Groupe étudiants noirs
   ]
 
   const profils = [
@@ -69,7 +70,7 @@ export default function PublicCible() {
       icon: Globe,
       titre: 'Entrepreneurs',
       desc: 'Vous lancez votre business et avez besoin de compétences en gestion',
-      image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=600&q=80',
+      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80',
       avantages: [
         'Formation entrepreneuriat',
         'Accompagnement projet',
@@ -79,48 +80,33 @@ export default function PublicCible() {
     },
   ]
 
+  const stats = [
+    { chiffre: '4', texte: "Profils concernés" },
+    { chiffre: '100%', texte: 'Formations adaptées' },
+    { chiffre: '6-24', texte: 'Mois de formation' },
+  ]
+
   useEffect(() => {
+    setMounted(true)
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length)
     }, 5000)
     return () => clearInterval(timer)
   }, [slides.length])
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  if (!mounted) return null
 
   return (
-    <main className={`min-h-screen ${montserrat.className}`}>
-      {/* HEADER */}
-      <header className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-        scrolled
-  ? 'bg-[#1e2a5e] shadow-xl py-4'
-          : 'bg-transparent py-5'
-      }`}>
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-          <Image
-            src="/logo-isefac.jpeg"
-            alt="ISEFAC"
-            width={70}
-            height={70}
-            className="bg-white p-2 rounded-lg object-contain"
-          />
-          <nav className="hidden md:flex space-x-8 text-white font-medium drop-shadow-lg">
-            <Link href="/" className="hover:text-blue-200">Accueil</Link>
-            <Link href="/a-propos" className="hover:text-blue-200">A propos</Link>
-            <Link href="/public-cible" className="text-orange-400 hover:text-orange-300">Public cible</Link>
-            <Link href="/formations" className="hover:text-blue-200">Formations</Link>
-            <Link href="/contact" className="hover:text-blue-200">Contact</Link>
-            <Link href="/espace-etudiant" className="hover:text-blue-200">Espace étudiant</Link>
-          </nav>
-        </div>
-      </header>
+    <div className={montserrat.className}>
+      <style jsx>{`
+        @keyframes shimmer {
+          0% { transform: translateX(-100%) skewX(-12deg); }
+          100% { transform: translateX(200%) skewX(-12deg); }
+        }
+      `}</style>
 
-      {/* HERO */}
-      <section className="relative h-screen w-full overflow-hidden">
+      {/* HERO - MÊME STYLE QUE HOME */}
+      <section className="relative h-[calc(100vh-80px)] w-full overflow-hidden">
         {slides.map((slide, index) => (
           <div
             key={index}
@@ -130,29 +116,47 @@ export default function PublicCible() {
           >
             <Image
               src={slide}
-              alt="ISEFAC"
+              alt="ISEFAC Public cible"
               fill
               className="object-cover"
               priority={index === 0}
               unoptimized
             />
-            <div className="absolute inset-0 bg-black/50" />
+            <div className="absolute inset-0 bg-black/60" />
           </div>
         ))}
 
-        <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center z-10 px-4 pt-32">
-          <p className="text-base md:text-xl mb-4 drop-shadow-lg uppercase tracking-wider font-semibold text-orange-400">
-            À QUI S'ADRESSE ISEFAC ?
+        <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center z-20 px-4 pt-20 md:pt-32">
+          <p className="text-xs sm:text-sm md:text-xl mb-4 drop-shadow-lg uppercase tracking-wider font-semibold text-orange-400">
+            À QUI S'ADRESSE ISEFAC?
           </p>
-          <h1 className="text-4xl md:text-6xl font-black mb-4 drop-shadow-2xl">
+
+          <h1 className="text-3xl md:text-6xl font-black mb-3 drop-shadow-2xl">
             UNE FORMATION POUR CHAQUE PROFIL
           </h1>
-          <p className="text-xl md:text-2xl mb-8 drop-shadow-lg max-w-3xl font-medium">
+
+          <p className="text-base md:text-xl mb-8 max-w-3xl font-medium px-4">
             Que vous soyez bachelier, professionnel ou en reconversion, ISEFAC a la formation qu'il vous faut
           </p>
+
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link
+              href="/formations"
+              className="cursor-pointer relative z-20 bg-orange-500 hover:bg-orange-600 px-5 py-3 rounded-md font-bold transition hover:scale-105 text-sm md:text-base"
+            >
+              🎓 Voir les formations
+            </Link>
+
+            <Link
+              href="/inscription"
+              className="cursor-pointer relative z-20 bg-blue-600 hover:bg-blue-700 px-5 py-3 rounded-md font-bold transition hover:scale-105 text-sm md:text-base"
+            >
+              📝 S'inscrire
+            </Link>
+          </div>
         </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-10">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
           {slides.map((_, index) => (
             <button
               key={index}
@@ -165,40 +169,61 @@ export default function PublicCible() {
         </div>
       </section>
 
-      {/* PROFILS CIBLES */}
-      <section className="bg-white py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black mb-6 text-gray-900">
-              VOUS ÊTES CONCERNÉ SI...
-            </h2>
-            <p className="text-xl text-gray-700 font-semibold">
-              ISEFAC s'adapte à votre parcours et vos objectifs
-            </p>
-            <div className="w-24 h-1 bg-blue-600 mx-auto mt-6"></div>
-          </div>
+      {/* BIENVENUE GLASS - MÊME STYLE QUE HOME */}
+      <section className="relative py-32 overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src="/slide6.jpg"
+            alt="Background"
+            fill
+            className="object-cover scale-105 animate-[pulse_8s_ease-in-out_infinite]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1e2a5e]/85 via-blue-900/75 to-[#1e2a5e]/85 backdrop-blur-sm" />
+        </div>
 
-          <div className="grid lg:grid-cols-2 gap-12">
+        <div className="relative max-w-5xl mx-auto px-6">
+          <div className="backdrop-blur-2xl bg-white/5 border border-white/20 rounded-3xl p-12 md:p-20 shadow-2xl relative overflow-hidden group">
+            <div className="absolute -inset-px bg-gradient-to-r from-transparent via-white/10 to-transparent animate-[shimmer_3s_ease-in-out_infinite] -skew-x-12"></div>
+            
+            <div className="relative z-10">
+              <h2 className="text-4xl md:text-6xl font-black mb-6 text-white drop-shadow-2xl text-center">
+                VOUS ÊTES CONCERNÉ SI...
+              </h2>
+
+              <p className="text-xl md:text-2xl text-blue-100 font-semibold mb-8 drop-shadow-lg text-center">
+                ISEFAC s'adapte à votre parcours et vos objectifs
+              </p>
+
+              <div className="w-32 h-1.5 bg-gradient-to-r from-orange-400 to-orange-600 mx-auto rounded-full shadow-lg"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PROFILS CIBLES */}
+      <section className="bg-white py-20">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {profils.map((profil, i) => (
-              <div key={i} className="bg-gradient-to-br from-gray-50 to-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all border-2 border-gray-100">
+              <div key={i} className="bg-gradient-to-br from-gray-50 to-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all border-2 border-gray-100 hover:border-orange-400 group">
                 <div className="relative h-64">
                   <Image
                     src={profil.image}
                     alt={profil.titre}
                     fill
-                    className="object-cover"
+                    className="object-cover group-hover:scale-105 transition duration-500"
                     unoptimized
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                   <div className="absolute bottom-6 left-6 flex items-center gap-4">
-                    <div className="bg-orange-500 p-4 rounded-2xl">
-                      <profil.icon className="text-white" size={32} />
+                    <div className="bg-orange-500 p-4 rounded-2xl shadow-xl">
+                      <profil.icon className="text-white" size={28} />
                     </div>
-                    <h3 className="text-2xl font-black text-white">{profil.titre}</h3>
+                    <h3 className="text-2xl font-black text-white drop-shadow-lg">{profil.titre}</h3>
                   </div>
                 </div>
                 <div className="p-8">
-                  <p className="text-gray-700 font-semibold mb-6">{profil.desc}</p>
+                  <p className="text-gray-700 font-semibold mb-6 text-base">{profil.desc}</p>
                   <ul className="space-y-3">
                     {profil.avantages.map((av, j) => (
                       <li key={j} className="flex items-start gap-3">
@@ -214,20 +239,43 @@ export default function PublicCible() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="bg-[#1e2a5e] py-20">
-        <div className="max-w-4xl mx-auto px-6 text-center text-white">
-          <h2 className="text-4xl md:text-5xl font-black mb-6">
-            VOUS VOUS RECONNAISSEZ ?
+      {/* STATS */}
+      <section className="bg-[#1e2a5e] text-white py-16">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-4xl font-black text-center mb-12">
+            Pourquoi choisir ISEFAC ?
           </h2>
-          <p className="text-xl mb-8 font-semibold text-blue-200">
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {stats.map((stat, i) => (
+              <div key={i} className="text-center">
+                <div className="text-5xl font-black mb-2 text-orange-400">
+                  {stat.chiffre}
+                </div>
+
+                <div className="text-blue-200 font-medium">
+                  {stat.texte}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-white py-20 border-t">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-4xl md:text-5xl font-black mb-6 text-gray-900">
+            VOUS VOUS RECONNAISSEZ?
+          </h2>
+          <p className="text-xl mb-8 text-gray-700 font-semibold">
             Découvrez nos formations adaptées à votre profil
           </p>
-          <Link href="/formations" className="inline-flex items-center gap-3 bg-orange-500 hover:bg-orange-600 px-10 py-4 rounded-xl font-black text-lg transition shadow-2xl hover:scale-105">
+          <Link href="/formations" className="inline-flex items-center gap-3 bg-orange-500 hover:bg-orange-600 px-10 py-4 rounded-xl font-black text-lg transition shadow-2xl hover:scale-105 text-white">
             Voir les formations <ArrowRight size={24} />
           </Link>
         </div>
       </section>
-    </main>
+    </div>
   )
 }

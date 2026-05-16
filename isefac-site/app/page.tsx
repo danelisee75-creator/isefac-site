@@ -26,9 +26,9 @@ export default function Home() {
     { nom: 'Sorbonne', logo: '/sorbonne.jpeg' },
     { nom: 'Evry', logo: '/evry.jpeg' },
     { nom: 'ILEC', logo: '/ilec.jpeg' },
-    { nom: 'IFAGE', logo: '/Ifage.jpeg' },
+    { nom: 'IFAGE', logo: '/ifage.jpg' },
     { nom: 'INUBIL', logo: '/inubil.jpeg' },
-    { nom: 'ISTAMA', logo: '/istama.png' },
+    { nom: 'ISTAMA', logo: '/Istama.png' },
     { nom: 'Université de Bamenda', logo: '/Université de Bamenda.jpeg' },
     { nom: 'Université de Douala', logo: '/université de douala.jpeg' },
     { nom: 'Université de Limoges', logo: '/université -de-limoges.jpeg' },
@@ -80,7 +80,7 @@ export default function Home() {
           </div>
         ))}
 
-        <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center z-20 px-4 pt-20 md:pt-32">
+        <div className="absolute inset-0 flex-col justify-center items-center text-white text-center z-20 px-4 pt-20 md:pt-32">
           <p className="text-xs sm:text-sm md:text-xl mb-4 drop-shadow-lg uppercase tracking-wider font-semibold text-white">
             INSTITUT DES SCIENCES DE L'ENSEIGNEMENT ET DE LA FORMATION EN ADMINISTRATION ET COMMERCE
           </p>
@@ -154,7 +154,7 @@ export default function Home() {
         </div>
 
         <div className="relative max-w-5xl mx-auto px-6">
-          <div className="backdrop-blur-2xl bg-white/5 border border-white/20 rounded-3xl p-12 md:p-20 shadow-2xl relative overflow-hidden group">
+          <div className="backdrop-blur-2xl bg-white/5 border-white/20 rounded-3xl p-12 md:p-20 shadow-2xl relative overflow-hidden group">
             <div className="absolute -inset-px bg-gradient-to-r from-transparent via-white/10 to-transparent animate-[shimmer_3s_ease-in-out_infinite] -skew-x-12"></div>
             
             <div className="relative z-10">
